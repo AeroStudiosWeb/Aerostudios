@@ -2,6 +2,6 @@
 
 window.AEROSTUDIO_CONFIG = Object.freeze({
   githubOwner: 'AeroStudiosWeb',
-  githubRepo: 'AeroStudio',
+  githubRepo: 'AeroStudios',
   releaseTag: 'v0.1.0-beta.1'
 });
