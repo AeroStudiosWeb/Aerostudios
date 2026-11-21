@@ -12,8 +12,8 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
   <title>AeroStudio — Aviation Creative Suite</title>
-  <script defer src="config.js"></script>
-  <script defer src="app.js"></script>
+  <script defer src="config.js?v=0.2.2"></script>
+  <script defer src="app.js?v=0.2.2"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -194,7 +194,7 @@
         </div>
         <div>
           <p class="section-lead">Choose the full-suite launcher or install apps individually. Windows builds are discovered live from the current GitHub release.</p>
-          <p class="release-status"><span class="status-dot"></span><span id="release-status" role="status" aria-live="polite">Checking release availability…</span></p>
+          <p class="release-status"><span class="status-dot"></span><span id="release-status" role="status" aria-live="polite">Beta 0.1 · Download links ready</span></p>
         </div>
       </div>
       <div class="suite-banner">
@@ -205,8 +205,8 @@
           <div class="suite-facts"><span>Windows 10 / 11</span><span>64-bit</span><span>Free beta</span></div>
         </div>
         <div class="suite-banner-action">
-          <a id="download-suite" class="btn btn-primary disabled-download" aria-disabled="true" tabindex="-1" data-asset="AeroStudio-Launcher-Windows.zip">Download launcher</a>
-          <span class="download-state" data-state="AeroStudio-Launcher-Windows.zip">Not published yet</span>
+          <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/download/v0.1.0-beta.1/AeroStudio-Launcher-Windows.zip" id="download-suite" class="btn btn-primary" data-asset="AeroStudio-Launcher-Windows.zip">Download launcher</a>
+          <span class="download-state" data-state="AeroStudio-Launcher-Windows.zip">Direct download available</span>
         </div>
       </div>
 
@@ -214,28 +214,28 @@
         <article class="download-row" id="download-room">
           <div class="download-copy"><h3>AeroRoom Studio</h3><p>RAW photography and aircraft image editing</p></div>
           <div class="download-actions">
-            <a class="download-action disabled-download" data-asset="AeroRoom-Windows.zip" aria-disabled="true" tabindex="-1">Windows app</a>
-            <a class="download-action alt disabled-download" data-asset="AeroRoom-Launcher-Windows.zip" aria-disabled="true" tabindex="-1">Individual launcher</a>
+            <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/download/v0.1.0-beta.1/AeroRoom-Windows.zip" class="download-action" data-asset="AeroRoom-Windows.zip">Windows app</a>
+            <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/download/v0.1.0-beta.1/AeroRoom-Launcher-Windows.zip" class="download-action alt" data-asset="AeroRoom-Launcher-Windows.zip">Individual launcher</a>
           </div>
         </article>
         <article class="download-row" id="download-film">
           <div class="download-copy"><h3>AeroFilm Studio</h3><p>Aviation filmmaking and timeline editing</p></div>
           <div class="download-actions">
-            <a class="download-action disabled-download" data-asset="AeroFilm-Windows.zip" aria-disabled="true" tabindex="-1">Windows app</a>
-            <a class="download-action alt disabled-download" data-asset="AeroFilm-Launcher-Windows.zip" aria-disabled="true" tabindex="-1">Individual launcher</a>
+            <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/download/v0.1.0-beta.1/AeroFilm-Windows.zip" class="download-action" data-asset="AeroFilm-Windows.zip">Windows app</a>
+            <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/download/v0.1.0-beta.1/AeroFilm-Launcher-Windows.zip" class="download-action alt" data-asset="AeroFilm-Launcher-Windows.zip">Individual launcher</a>
           </div>
         </article>
         <article class="download-row" id="download-photo">
           <div class="download-copy"><h3>AeroPhoto Studio</h3><p>Aircraft graphics, overlays and composites</p></div>
           <div class="download-actions">
-            <a class="download-action disabled-download" data-asset="AeroPhoto-Windows.zip" aria-disabled="true" tabindex="-1">Windows app</a>
-            <a class="download-action alt disabled-download" data-asset="AeroPhoto-Launcher-Windows.zip" aria-disabled="true" tabindex="-1">Individual launcher</a>
+            <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/download/v0.1.0-beta.1/AeroPhoto-Windows.zip" class="download-action" data-asset="AeroPhoto-Windows.zip">Windows app</a>
+            <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/download/v0.1.0-beta.1/AeroPhoto-Launcher-Windows.zip" class="download-action alt" data-asset="AeroPhoto-Launcher-Windows.zip">Individual launcher</a>
           </div>
         </article>
       </div>
       <div class="downloads-meta">
         <p>Release files are hosted through GitHub Releases. If the live release lookup fails, visitors can still use the release page directly.</p>
-        <a id="release-page" class="text-link" href="#" aria-disabled="true">Release page →</a>
+        <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/tag/v0.1.0-beta.1" id="release-page" class="text-link">Release page →</a>
       </div>
     </section>
 
@@ -291,7 +291,7 @@
         <a href="#apps">Apps</a>
         <a href="#downloads">Downloads</a>
         <a href="#guide">Getting started</a>
-        <a id="footer-repository" href="#" aria-disabled="true">GitHub repository</a>
+        <a href="https://github.com/AeroStudiosWeb/AeroStudios" id="footer-repository">GitHub repository</a>
       </div>
     </div>
   </footer>
