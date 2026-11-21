@@ -4,84 +4,296 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#071320">
-  <meta name="description" content="AeroStudio is a free aviation-focused creative suite. Edit RAW aircraft photographs, make aviation films and design aircraft graphics.">
+  <meta name="description" content="AeroStudio is a free aviation-focused creative suite for Windows. Edit RAW aircraft photos in AeroRoom, build aviation films in AeroFilm and design aircraft graphics in AeroPhoto.">
   <meta property="og:title" content="AeroStudio — Aviation Creative Suite">
-  <meta property="og:description" content="Three creative applications. One destination. Built for aviation creators.">
+  <meta property="og:description" content="Three aviation creative apps. One free Windows suite.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/f35-aeroroom-export.jpg">
+  <meta property="og:image" content="assets/f35-after.jpg">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
-  <title>AeroStudio — Create above the ordinary.</title>
+  <title>AeroStudio — Aviation Creative Suite</title>
   <script defer src="config.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="topbar" id="top">
-    <div class="shell nav-inner">
-      <a href="#top" class="brand" aria-label="AeroStudio home"><span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 28 28"><path d="M14 2 2 25l12-5 12 5L14 2Z"/><path d="M14 12v15"/></svg></span><span>AERO<span class="brand-light">STUDIO</span></span><span class="nav-beta">BETA</span></a>
-      <nav aria-label="Main navigation" class="nav-links"><a href="#apps">Applications</a><a href="#workflow">Workflow</a><a href="#downloads">Downloads</a></nav>
-      <a href="#downloads" class="nav-cta">Get AeroStudio <span aria-hidden="true">↗</span></a>
+    <div class="shell topbar-inner">
+      <a href="#top" class="brand" aria-label="AeroStudio home">
+        <span class="brand-mark" aria-hidden="true">✈</span>
+        <span>AERO<span>STUDIO</span></span>
+        <span class="beta-pill">PUBLIC BETA</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#apps">Apps</a>
+        <a href="#compare">Before / After</a>
+        <a href="#downloads">Downloads</a>
+        <a href="#guide">Getting started</a>
+        <a href="#roadmap">Roadmap</a>
+      </nav>
+      <a class="nav-cta" href="#downloads">Download</a>
     </div>
   </header>
+
   <main id="main">
     <section class="hero">
-      <div class="hero-image" role="img" aria-label="F-35A fighter aircraft photographed and processed in AeroRoom"></div>
+      <div class="hero-bg"></div>
       <div class="hero-overlay"></div>
-      <div class="hero-grid" aria-hidden="true"></div>
       <div class="shell hero-content">
-        <div class="eyebrow"><span class="live-dot"></span> AVIATION CREATIVE SUITE <span class="eyebrow-divider">/</span> WINDOWS</div>
-        <h1>Create above<br><em>the ordinary.</em></h1>
-        <p class="hero-lede">From the runway to the final frame. One creative toolkit for aircraft photography, cinematic video and striking aviation graphics.</p>
-        <div class="hero-buttons"><a class="btn btn-primary" href="#downloads">Explore downloads <span aria-hidden="true">↗</span></a><a class="btn btn-outline" href="#apps">Discover the suite <span aria-hidden="true">↓</span></a></div>
-        <div class="hero-meta"><span><span class="check-mark">✓</span> Free software</span><span><span class="check-mark">✓</span> Native Windows apps</span><span><span class="check-mark">✓</span> Aviation first</span></div>
-      </div>
-      <div class="hero-side-label">AEROROOM EXPORT · F-35A</div>
-      <div class="hero-bottom shell"><span>01 / MADE FOR FLIGHT</span><span>SCROLL TO EXPLORE ↓</span></div>
-    </section>
-
-    <section class="intro section shell" id="apps">
-      <div class="section-kicker"><span class="short-line"></span> THE COLLECTION <span>01 / 03</span></div>
-      <div class="intro-header"><h2>One vision.<br><span>Three creative tools.</span></h2><p>Different crafts, one aviation-focused workspace. Use each application independently, or bring them together for a complete creation workflow.</p></div>
-      <div class="app-grid">
-        <article class="app-card room">
-          <div class="card-top"><div class="app-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="13"/><circle cx="24" cy="24" r="6"/><path d="M24 4v7M44 24h-7M24 44v-7M4 24h7"/></svg></div><span class="app-index">01 / PHOTOGRAPHY</span></div>
-          <div class="card-illustration room-art" aria-hidden="true"><div class="room-frame"><img src="assets/f35-aeroroom-export.jpg" alt="" loading="lazy"><div class="focus-corners"></div></div><div class="room-bars"><i></i><i></i><i></i><i></i></div></div>
-          <div class="card-content"><h3>Aero<span>Room</span></h3><p class="app-subtitle">RAW development studio</p><p>Develop aircraft photos with non-destructive adjustments, accurate crop and rotation, an image library, aviation presets and retained denoising tools.</p><a class="text-link" href="#download-room">Get AeroRoom <span aria-hidden="true">↗</span></a></div>
-        </article>
-        <article class="app-card film">
-          <div class="card-top"><div class="app-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="10" width="32" height="28" rx="3"/><path d="M8 18h32M16 10l6 8M29 10l6 8M14 28h20"/></svg></div><span class="app-index">02 / VIDEO</span></div>
-          <div class="card-illustration film-art" aria-hidden="true"><div class="film-preview"><img src="assets/f35-aeroroom-export.jpg" alt="" loading="lazy"><div class="play-glyph">▶</div></div><div class="track-bar"><i></i><i></i><i></i><i></i></div><div class="timecode">00:24:18:12 <span>▌</span> 24 FPS</div></div>
-          <div class="card-content"><h3>Aero<span>Film</span></h3><p class="app-subtitle">Aviation video studio</p><p>Cut footage on a proper timeline, add aircraft ID captions, organise flight-shot logs and produce video projects inspired by the flightline.</p><a class="text-link" href="#download-film">Get AeroFilm <span aria-hidden="true">↗</span></a></div>
-        </article>
-        <article class="app-card photo">
-          <div class="card-top"><div class="app-icon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="m24 6 18 10-18 10L6 16 24 6Z"/><path d="m6 24 18 10 18-10M6 32l18 10 18-10"/></svg></div><span class="app-index">03 / DESIGN</span></div>
-          <div class="card-illustration photo-art" aria-hidden="true"><div class="graphic-outline"><span class="graphic-grid"></span><span class="graphic-plane">✈</span><span class="graphic-title">AIRCRAFT<span> / 5619</span></span><span class="graphic-caption">F-35A LIGHTNING II</span></div><div class="layers-panel"><i></i><i></i><i></i></div></div>
-          <div class="card-content"><h3>Aero<span>Photo</span></h3><p class="app-subtitle">Graphics & composites</p><p>Create aviation posters, layered aircraft composites and identification cards with editable visual elements and dedicated aircraft overlay tools.</p><a class="text-link" href="#download-photo">Get AeroPhoto <span aria-hidden="true">↗</span></a></div>
-        </article>
+        <p class="eyebrow">FREE · WINDOWS · AVIATION-FOCUSED CREATIVE SUITE</p>
+        <h1>Create aviation photos, films and graphics in one suite.</h1>
+        <p class="hero-text">AeroStudio brings together AeroRoom for RAW photography, AeroFilm for video editing and AeroPhoto for composites and aircraft artwork. Built for spotters, photographers and aviation creators.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#downloads">Get AeroStudio</a>
+          <a class="btn btn-secondary" href="#apps">See the apps</a>
+        </div>
+        <ul class="hero-points">
+          <li>Native Windows apps</li>
+          <li>Free public beta</li>
+          <li>Individual apps or full suite</li>
+        </ul>
       </div>
     </section>
 
-    <section class="workflow-block" id="workflow">
-      <div class="shell section workflow-shell"><div class="section-kicker"><span class="short-line"></span> HOW IT FITS TOGETHER <span>02 / 03</span></div><h2>From capture.<br><span>To something extraordinary.</span></h2>
-      <div class="flow-steps"><div class="flow-step"><span class="flow-number">01</span><div><h3>Develop the shot.</h3><p>Import your RAW aircraft photos and fine-tune the colour, light and detail in AeroRoom.</p></div></div><div class="flow-step"><span class="flow-number">02</span><div><h3>Build the story.</h3><p>Design aircraft cards, composites and overlays in AeroPhoto.</p></div></div><div class="flow-step"><span class="flow-number">03</span><div><h3>Bring it to life.</h3><p>Assemble photos, titles and footage on AeroFilm's timeline and export your edit.</p></div></div></div>
-      <p class="workflow-note">Today, the apps exchange files through standard import/export workflows. A shared project library is a future goal, not an existing feature.</p>
+    <section class="section shell intro-strip">
+      <div class="kicker">WHY AEROSTUDIO</div>
+      <div class="intro-grid">
+        <div><h2>Three tools. One aviation workflow.</h2></div>
+        <div><p>AeroStudio is designed around actual aviation creative work: developing RAW aircraft images, designing overlays and composites, and editing footage for aviation videos. Use each app on its own, or combine them into one workflow.</p></div>
+      </div>
+      <div class="stats-grid">
+        <article><strong>3</strong><span>Creative applications</span></article>
+        <article><strong>7</strong><span>Download options on the site</span></article>
+        <article><strong>0£</strong><span>Free to download and test</span></article>
+        <article><strong>Beta</strong><span>Growing with community feedback</span></article>
       </div>
     </section>
 
-    <section class="download-section section shell" id="downloads">
-      <div class="section-kicker"><span class="short-line"></span> DOWNLOADS <span>03 / 03</span></div>
-      <div class="intro-header download-head"><h2>Ready for<br><span>takeoff?</span></h2><div class="download-header-right"><p>Choose the full suite manager, or just the application you need. Each product can be downloaded independently.</p><div class="release-line"><span class="live-dot"></span><span id="release-status" role="status" aria-live="polite">Checking release availability…</span></div></div></div>
-      <div class="suite-banner"><div class="suite-art" aria-hidden="true"><div class="suite-mark">A<span>ST</span></div><div class="suite-ring"></div></div><div class="suite-description"><span class="mini-label">RECOMMENDED / THREE APPLICATIONS</span><h3>AeroStudio Launcher</h3><p>One lightweight manager. Download, install, and open AeroRoom, AeroFilm and AeroPhoto from a single place. The apps are installed separately.</p><div class="suite-facts"><span>Windows 10 / 11</span><span>64-bit</span><span>Free</span></div></div><div class="suite-action"><a id="download-suite" class="btn btn-primary disabled-download" aria-disabled="true" tabindex="-1" data-asset="AeroStudio-Launcher-Windows.zip">Download launcher ↗</a><span class="download-state" data-state="AeroStudio-Launcher-Windows.zip">Not published yet</span></div></div>
+    <section class="section shell" id="apps">
+      <div class="section-head">
+        <div>
+          <p class="kicker">APPLICATIONS</p>
+          <h2>The AeroStudio lineup</h2>
+        </div>
+        <p class="section-lead">Real screenshots from the current Windows builds, showing each application in actual use.</p>
+      </div>
+      <div class="showcase-grid">
+        <article class="showcase-card">
+          <div class="showcase-media"><img src="assets/aeroroom-screenshot.png" alt="AeroRoom Studio editing an F-35A photograph"></div>
+          <div class="showcase-copy">
+            <span class="showcase-tag">01 · RAW PHOTO EDITING</span>
+            <h3>AeroRoom Studio</h3>
+            <p>Develop RAW aircraft photographs with aviation presets, a library view, non-destructive edits and retained denoising tools.</p>
+            <ul>
+              <li>Flightline Looks presets</li>
+              <li>Photo library and search</li>
+              <li>Light, colour, detail and optics tools</li>
+            </ul>
+            <a href="#download-room" class="text-link">Download AeroRoom →</a>
+          </div>
+        </article>
+        <article class="showcase-card reverse">
+          <div class="showcase-media"><img src="assets/aerofilm-screenshot.png" alt="AeroFilm Studio editing aviation footage"></div>
+          <div class="showcase-copy">
+            <span class="showcase-tag">02 · AVIATION VIDEO</span>
+            <h3>AeroFilm Studio</h3>
+            <p>Edit aircraft footage on a full timeline and use aviation-focused tools such as flight logs and aircraft captions.</p>
+            <ul>
+              <li>Timeline video editing</li>
+              <li>Flight log and aircraft caption tools</li>
+              <li>Project and media organisation</li>
+            </ul>
+            <a href="#download-film" class="text-link">Download AeroFilm →</a>
+          </div>
+        </article>
+        <article class="showcase-card">
+          <div class="showcase-media"><img src="assets/aerophoto-screenshot.png" alt="AeroPhoto Studio creating an aviation composite"></div>
+          <div class="showcase-copy">
+            <span class="showcase-tag">03 · GRAPHICS & COMPOSITES</span>
+            <h3>AeroPhoto Studio</h3>
+            <p>Create layered aircraft composites, aviation graphics and identity overlays with a Photoshop-style workspace.</p>
+            <ul>
+              <li>Layer-based editing</li>
+              <li>Aircraft identity overlay tools</li>
+              <li>Aviation artwork and composites</li>
+            </ul>
+            <a href="#download-photo" class="text-link">Download AeroPhoto →</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section compare-section" id="compare">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <p class="kicker">AEROROOM DEMO</p>
+            <h2>See the edit difference</h2>
+          </div>
+          <p class="section-lead">A real AeroRoom export comparison using your F-35A image. The darker image is the before version; the brighter image is the edited after version.</p>
+        </div>
+        <div class="compare-layout">
+          <div class="before-after" data-compare>
+            <img src="assets/f35-after.jpg" alt="AeroRoom after image of an F-35A in flight" class="compare-image compare-base">
+            <div class="compare-overlay" style="width:50%">
+              <img src="assets/f35-before.jpg" alt="AeroRoom before image of an F-35A in flight" class="compare-image">
+            </div>
+            <div class="compare-divider" style="left:50%"><span></span></div>
+            <input type="range" min="0" max="100" value="50" class="compare-range" aria-label="Before and after image comparison slider">
+            <div class="compare-label compare-label-left">Before</div>
+            <div class="compare-label compare-label-right">After</div>
+          </div>
+          <aside class="compare-notes">
+            <h3>What this demo shows</h3>
+            <ul>
+              <li>Shadow and tonal changes</li>
+              <li>Real AeroRoom export output</li>
+              <li>A practical aviation editing use case</li>
+            </ul>
+            <p>This gives visitors a much clearer idea of what AeroRoom actually does than a generic features list on its own.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell workflow-section" id="guide">
+      <div class="section-head">
+        <div>
+          <p class="kicker">GETTING STARTED</p>
+          <h2>How to use the suite</h2>
+        </div>
+        <p class="section-lead">Clear guidance helps first-time visitors understand what to download and how the apps fit together.</p>
+      </div>
+      <div class="guide-grid">
+        <article>
+          <span>01</span>
+          <h3>Choose your install</h3>
+          <p>Download the main AeroStudio Launcher for the full suite, or use the standalone app or individual launcher downloads if you only need one app.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>Edit your files</h3>
+          <p>Use AeroRoom for RAW photography, AeroFilm for footage and AeroPhoto for composites or aircraft overlay graphics.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3>Export and create</h3>
+          <p>Export your finished media and combine apps as needed — for example, AeroPhoto graphics can go into AeroFilm projects.</p>
+        </article>
+      </div>
+      <div class="notice-box">
+        <strong>Public beta notice:</strong> AeroStudio is already usable, but it is still evolving. Expect active improvements and occasional bugs as the suite develops.
+      </div>
+    </section>
+
+    <section class="section shell download-section" id="downloads">
+      <div class="section-head">
+        <div>
+          <p class="kicker">DOWNLOADS</p>
+          <h2>Download AeroStudio</h2>
+        </div>
+        <div>
+          <p class="section-lead">Choose the full-suite launcher or install apps individually. Windows builds are discovered live from the current GitHub release.</p>
+          <p class="release-status"><span class="status-dot"></span><span id="release-status" role="status" aria-live="polite">Checking release availability…</span></p>
+        </div>
+      </div>
+      <div class="suite-banner">
+        <div class="suite-banner-copy">
+          <p class="mini-kicker">RECOMMENDED</p>
+          <h3>AeroStudio Launcher</h3>
+          <p>Install and manage AeroRoom, AeroFilm and AeroPhoto from one place.</p>
+          <div class="suite-facts"><span>Windows 10 / 11</span><span>64-bit</span><span>Free beta</span></div>
+        </div>
+        <div class="suite-banner-action">
+          <a id="download-suite" class="btn btn-primary disabled-download" aria-disabled="true" tabindex="-1" data-asset="AeroStudio-Launcher-Windows.zip">Download launcher</a>
+          <span class="download-state" data-state="AeroStudio-Launcher-Windows.zip">Not published yet</span>
+        </div>
+      </div>
+
       <div class="download-list">
-        <article class="download-row" id="download-room"><div class="download-id">01</div><div class="download-app"><h3>AeroRoom Studio</h3><p>RAW photography and aircraft editing</p></div><div class="download-options"><a class="download-action disabled-download" data-asset="AeroRoom-Windows.zip" aria-disabled="true" tabindex="-1">Windows app <span>↗</span></a><a class="download-action alternate disabled-download" data-asset="AeroRoom-Launcher-Windows.zip" aria-disabled="true" tabindex="-1">Individual launcher <span>↗</span></a></div></article>
-        <article class="download-row" id="download-film"><div class="download-id">02</div><div class="download-app"><h3>AeroFilm Studio</h3><p>Aviation filmmaking and editing</p></div><div class="download-options"><a class="download-action disabled-download" data-asset="AeroFilm-Windows.zip" aria-disabled="true" tabindex="-1">Windows app <span>↗</span></a><a class="download-action alternate disabled-download" data-asset="AeroFilm-Launcher-Windows.zip" aria-disabled="true" tabindex="-1">Individual launcher <span>↗</span></a></div></article>
-        <article class="download-row" id="download-photo"><div class="download-id">03</div><div class="download-app"><h3>AeroPhoto Studio</h3><p>Aircraft graphics and layered artwork</p></div><div class="download-options"><a class="download-action disabled-download" data-asset="AeroPhoto-Windows.zip" aria-disabled="true" tabindex="-1">Windows app <span>↗</span></a><a class="download-action alternate disabled-download" data-asset="AeroPhoto-Launcher-Windows.zip" aria-disabled="true" tabindex="-1">Individual launcher <span>↗</span></a></div></article>
+        <article class="download-row" id="download-room">
+          <div class="download-copy"><h3>AeroRoom Studio</h3><p>RAW photography and aircraft image editing</p></div>
+          <div class="download-actions">
+            <a class="download-action disabled-download" data-asset="AeroRoom-Windows.zip" aria-disabled="true" tabindex="-1">Windows app</a>
+            <a class="download-action alt disabled-download" data-asset="AeroRoom-Launcher-Windows.zip" aria-disabled="true" tabindex="-1">Individual launcher</a>
+          </div>
+        </article>
+        <article class="download-row" id="download-film">
+          <div class="download-copy"><h3>AeroFilm Studio</h3><p>Aviation filmmaking and timeline editing</p></div>
+          <div class="download-actions">
+            <a class="download-action disabled-download" data-asset="AeroFilm-Windows.zip" aria-disabled="true" tabindex="-1">Windows app</a>
+            <a class="download-action alt disabled-download" data-asset="AeroFilm-Launcher-Windows.zip" aria-disabled="true" tabindex="-1">Individual launcher</a>
+          </div>
+        </article>
+        <article class="download-row" id="download-photo">
+          <div class="download-copy"><h3>AeroPhoto Studio</h3><p>Aircraft graphics, overlays and composites</p></div>
+          <div class="download-actions">
+            <a class="download-action disabled-download" data-asset="AeroPhoto-Windows.zip" aria-disabled="true" tabindex="-1">Windows app</a>
+            <a class="download-action alt disabled-download" data-asset="AeroPhoto-Launcher-Windows.zip" aria-disabled="true" tabindex="-1">Individual launcher</a>
+          </div>
+        </article>
       </div>
-      <div class="downloads-bottom"><p><strong>What you're downloading.</strong> An app ZIP contains the standalone Windows executable. A launcher ZIP contains the small AeroStudio installer/manager, which downloads the app after you open it. No Rust or Visual Studio needed for prebuilt releases.</p><a id="release-page" class="muted-link" aria-disabled="true">Release notes ↗</a></div>
+      <div class="downloads-meta">
+        <p>Release files are hosted through GitHub Releases. If the live release lookup fails, visitors can still use the release page directly.</p>
+        <a id="release-page" class="text-link" href="#" aria-disabled="true">Release page →</a>
+      </div>
     </section>
-    <section class="closing"><div class="shell closing-inner"><span class="closing-kicker">BUILT FOR THE PEOPLE WHO LOOK UP</span><h2>Stay curious.<br><em>Keep creating.</em></h2><a href="#downloads" class="btn btn-outline">Find your tools ↑</a></div></section>
+
+    <section class="section shell" id="roadmap">
+      <div class="section-head">
+        <div>
+          <p class="kicker">ROADMAP & TRUST</p>
+          <h2>What comes next</h2>
+        </div>
+        <p class="section-lead">Clear expectations make the website feel more serious and transparent.</p>
+      </div>
+      <div class="roadmap-grid">
+        <article>
+          <h3>Website improvements</h3>
+          <ul>
+            <li>More guides and tutorial pages</li>
+            <li>Expanded comparison galleries</li>
+            <li>Cleaner release notes presentation</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Application improvements</h3>
+          <ul>
+            <li>Refine AeroRoom’s photo workflow</li>
+            <li>Expand AeroFilm aviation video tools</li>
+            <li>Improve AeroPhoto overlay templates</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Beta expectations</h3>
+          <ul>
+            <li>Free public beta builds</li>
+            <li>Occasional rough edges</li>
+            <li>Feedback-driven development</li>
+          </ul>
+        </article>
+      </div>
+      <div class="trust-grid">
+        <article><h4>Open-source foundations</h4><p>AeroStudio builds on existing open-source foundations and keeps the required licensing and attribution files.</p></article>
+        <article><h4>Checksums & releases</h4><p>Downloads are packaged as release assets and can be accompanied by SHA-256 checksum files for verification.</p></article>
+        <article><h4>Issue reporting</h4><p>Use the GitHub repository to report bugs, request features and follow development.</p></article>
+      </div>
+    </section>
   </main>
-  <footer class="footer"><div class="shell footer-inner"><div><a class="brand footer-brand" href="#top"><span class="brand-symbol" aria-hidden="true">✦</span> AERO<span class="brand-light">STUDIO</span></a><p>Creative software for aviation enthusiasts.</p></div><div class="footer-links"><a href="#apps">Applications</a><a href="#downloads">Downloads</a><a id="footer-repository" aria-disabled="true">Website source & issues</a></div></div><div class="shell legal">AeroRoom, AeroFilm and AeroPhoto are independent forks of open-source editing projects. Upstream authors retain their respective copyrights. AeroStudio is not affiliated with Adobe or any aircraft manufacturer. Public beta — test with copies of important files.</div></footer>
+
+  <footer class="footer">
+    <div class="shell footer-grid">
+      <div>
+        <p class="footer-brand">AeroStudio</p>
+        <p class="footer-copy">Free aviation creative software for Windows — public beta.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#apps">Apps</a>
+        <a href="#downloads">Downloads</a>
+        <a href="#guide">Getting started</a>
+        <a id="footer-repository" href="#" aria-disabled="true">GitHub repository</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
