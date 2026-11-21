@@ -1,0 +1,30 @@
+AEROSTUDIO — WEBSITE & DOWNLOADS
+================================
+
+WHAT IS IN THIS KIT?
+A responsive GitHub Pages site, launchers for AeroRoom/AeroFilm/AeroPhoto,
+a main AeroStudio suite launcher, a PowerShell tool to package your Windows
+app builds, GitHub Pages deployment workflow, and upstream licences.
+
+THE FASTEST SETUP:
+1. Extract this ZIP to its own folder, e.g. C:\Projects\AeroStudio-GitHub.
+2. Create an empty public repository on GitHub called AeroStudio.
+3. Publish the contents of this extracted folder with GitHub Desktop.
+4. In the extracted folder, open Command Prompt and run:
+
+   powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Make-Windows-Release.ps1 -Owner YOUR_GITHUB_USERNAME -Repository AeroStudio -Tag v0.1.0-beta.1
+
+   (The script reads the THREE installed applications from your
+    %LOCALAPPDATA%\AeroStudio\Apps\ folders.)
+
+5. Commit and push the updated docs\config.js to GitHub.
+6. GitHub repository Settings > Pages > Source: GitHub Actions.
+7. GitHub repository Releases > Draft a new release. Use tag
+   v0.1.0-beta.1 and upload the seven ZIPs and SHA256SUMS.txt generated
+   inside release-out\.
+8. Visit https://YOUR_GITHUB_USERNAME.github.io/AeroStudio/ to see
+   the download buttons go live.
+
+See README.md for detailed instructions and limitations.
+The website is tested here; the release packaging script must still be
+run and tested on your actual Windows computer before public distribution.

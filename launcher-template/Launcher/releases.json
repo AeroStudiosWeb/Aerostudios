@@ -1,0 +1,5 @@
+{
+  "AeroRoom": { "version": "0.3-dev", "url": "", "sha256": "" },
+  "AeroFilm": { "version": "0.1-dev", "url": "", "sha256": "" },
+  "AeroPhoto": { "version": "0.1-dev", "url": "", "sha256": "" }
+}
