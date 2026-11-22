@@ -1,4 +1,4 @@
-/* AeroStudio download integration v0.2.2.
+/* AeroStudio download integration v0.2.3.
  * Download hrefs are present directly in index.html even when JavaScript fails.
  * The API is solely for optional size/availability labels; it MUST NOT override
  * download links with the release page or disable any download button.
@@ -15,6 +15,22 @@
   const releaseLink = document.getElementById('release-page');
   const repoLink = document.getElementById('footer-repository');
   const links = Array.from(document.querySelectorAll('a[data-asset]'));
+  // AeroEnhance's filename includes its app version and GPU variant, so it cannot
+  // use the static filename system used by the original three applications.
+  const enhanceLinks = Array.from(document.querySelectorAll('a[data-aeroenhance-variant]'));
+  const enhanceState = document.getElementById('aeroenhance-state');
+  const enhanceMessage = message => { if (enhanceState) enhanceState.textContent = message; };
+  const findEnhanceAsset = (assets, variant) => {
+    const candidates = assets.filter(asset =>
+      typeof asset.name === 'string' &&
+      /^AeroEnhance-v[\w.+-]+-Windows-x64-(CUDA|CPU)\.zip$/i.test(asset.name) &&
+      asset.name.toUpperCase().endsWith(`-${variant.toUpperCase()}.ZIP`)
+    );
+    return candidates.sort((a, b) =>
+      Date.parse(b.created_at || '') - Date.parse(a.created_at || '') ||
+      b.name.localeCompare(a.name)
+    )[0] || null;
+  };
   const setStatus = text => { if (status) status.textContent = text; };
   const setAssetState = (filename, text) => {
     const span = Array.from(document.querySelectorAll('[data-state]'))
@@ -38,7 +54,10 @@
       releaseLink.href = release;
       releaseLink.removeAttribute('aria-disabled');
     }
-    // Always construct direct links. Never point individual buttons at /releases/tag/.
+    // Until the release API confirms a matching AeroEnhance asset, its button
+    // links to the shared release page rather than inventing a ZIP URL.
+    enhanceLinks.forEach(link => { link.href = release; });
+    // Always construct direct links for the seven existing, fixed-name assets.
     links.forEach(link => {
       const filename = link.dataset.asset || '';
       if (!/^[A-Za-z0-9_.-]+\.zip$/i.test(filename)) return;
@@ -73,11 +92,35 @@
           }
           // Intentionally do not modify link.href here.
         });
+        // AeroEnhance lives in the SAME release; match its versioned file name.
+        // Do not offer a broken direct URL when that file is not attached yet.
+        const releaseAssets = Array.isArray(data.assets) ? data.assets : [];
+        let availableEnhance = 0;
+        enhanceLinks.forEach(link => {
+          const variant = String(link.dataset.aeroenhanceVariant || '').toUpperCase();
+          if (variant !== 'CUDA' && variant !== 'CPU') return;
+          const matched = findEnhanceAsset(releaseAssets, variant);
+          if (!matched) {
+            link.href = release;
+            link.textContent = `${variant} ZIP · view release`;
+            if (variant === 'CPU') link.hidden = true;
+            return;
+          }
+          link.hidden = false;
+          link.href = `${base}/releases/download/${encodeURIComponent(tag)}/${encodeURIComponent(matched.name)}`;
+          link.textContent = `${variant} ZIP · ${sizeLabel(matched.size)}`;
+          link.title = `Download ${matched.name}`;
+          availableEnhance++;
+        });
+        enhanceMessage(availableEnhance
+          ? `${availableEnhance} AeroEnhance Windows variant(s) found in ${tag}. GPU users may need compatible NVIDIA drivers and CUDA libraries.`
+          : `AeroEnhance isn't attached to ${tag} yet. Add its packaged ZIP to that GitHub Release; the button will update automatically.`);
         setStatus(`${tag} · Direct downloads ready${count ? ` · ${count} file(s) verified` : ''}`);
       })
       .catch(() => {
         setStatus(`${tag} · Direct downloads available (release information not loaded)`);
-        // Intentionally do not modify link.href here.
+        enhanceMessage('Could not check AeroEnhance assets automatically. Open the shared GitHub release to see available files.');
+        // Keep the AeroEnhance button pointed at the release page; do not invent a URL.
       });
   }
 

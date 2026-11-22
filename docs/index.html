@@ -4,16 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#071320">
-  <meta name="description" content="AeroStudio is a free aviation-focused creative suite for Windows. Edit RAW aircraft photos in AeroRoom, build aviation films in AeroFilm and design aircraft graphics in AeroPhoto.">
+  <meta name="description" content="AeroStudio is a free aviation-focused creative suite for Windows. Edit RAW aircraft photos in AeroRoom, enhance photos in AeroEnhance, edit videos in AeroFilm and design graphics in AeroPhoto.">
   <meta property="og:title" content="AeroStudio — Aviation Creative Suite">
-  <meta property="og:description" content="Three aviation creative apps. One free Windows suite.">
+  <meta property="og:description" content="Four aviation creative apps. One free Windows suite.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/f35-after.jpg">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
   <title>AeroStudio — Aviation Creative Suite</title>
-  <script defer src="config.js?v=0.2.2"></script>
-  <script defer src="app.js?v=0.2.2"></script>
+  <script defer src="config.js?v=0.2.3"></script>
+  <script defer src="app.js?v=0.2.3"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -41,8 +41,8 @@
       <div class="hero-overlay"></div>
       <div class="shell hero-content">
         <p class="eyebrow">FREE · WINDOWS · AVIATION-FOCUSED CREATIVE SUITE</p>
-        <h1>Create aviation photos, films and graphics in one suite.</h1>
-        <p class="hero-text">AeroStudio brings together AeroRoom for RAW photography, AeroFilm for video editing and AeroPhoto for composites and aircraft artwork. Built for spotters, photographers and aviation creators.</p>
+        <h1>Create, enhance and edit aviation media with one suite.</h1>
+        <p class="hero-text">AeroStudio brings together AeroRoom for RAW development, AeroEnhance for AI photo enhancement, AeroFilm for video editing and AeroPhoto for aircraft graphics. Built for spotters, photographers and aviation creators.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#downloads">Get AeroStudio</a>
           <a class="btn btn-secondary" href="#apps">See the apps</a>
@@ -58,12 +58,12 @@
     <section class="section shell intro-strip">
       <div class="kicker">WHY AEROSTUDIO</div>
       <div class="intro-grid">
-        <div><h2>Three tools. One aviation workflow.</h2></div>
-        <div><p>AeroStudio is designed around actual aviation creative work: developing RAW aircraft images, designing overlays and composites, and editing footage for aviation videos. Use each app on its own, or combine them into one workflow.</p></div>
+        <div><h2>Four tools. One aviation workflow.</h2></div>
+        <div><p>AeroStudio is built around aviation creative work: developing RAW images, AI-assisted noise reduction, designing composites and editing video footage. Use each app on its own, or combine them into one workflow.</p></div>
       </div>
       <div class="stats-grid">
-        <article><strong>3</strong><span>Creative applications</span></article>
-        <article><strong>7</strong><span>Download options on the site</span></article>
+        <article><strong>4</strong><span>Creative applications</span></article>
+        <article><strong>8+</strong><span>Download options when published</span></article>
         <article><strong>0£</strong><span>Free to download and test</span></article>
         <article><strong>Beta</strong><span>Growing with community feedback</span></article>
       </div>
@@ -120,6 +120,27 @@
             <a href="#download-photo" class="text-link">Download AeroPhoto →</a>
           </div>
         </article>
+        <article class="showcase-card reverse">
+          <div class="showcase-media">
+            <div class="enhance-preview" role="img" aria-label="Illustrative AeroEnhance feature panel; application screenshot coming soon">
+              <span class="enhance-preview-kicker">AEROENHANCE STUDIO</span>
+              <span class="enhance-preview-title">Restore the detail.</span>
+              <div class="enhance-preview-chips"><span>RAW</span><span>AI DENOISE</span><span>16-BIT TIFF</span><span>CUDA BETA</span></div>
+              <span class="enhance-preview-disclaimer">Illustrative feature card · screenshot coming soon</span>
+            </div>
+          </div>
+          <div class="showcase-copy">
+            <span class="showcase-tag">04 · AI PHOTO ENHANCEMENT</span>
+            <h3>AeroEnhance Studio</h3>
+            <p>Experiment with high-ISO noise reduction and 16-bit RAW-to-TIFF processing using a locally installed ONNX model.</p>
+            <ul>
+              <li>RAW input powered by AeroRoom’s shared decoder</li>
+              <li>Optional NVIDIA CUDA neural inference</li>
+              <li>Private beta: models and GPU dependencies require setup</li>
+            </ul>
+            <a href="#download-enhance" class="text-link">Download AeroEnhance →</a>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -173,7 +194,7 @@
         <article>
           <span>02</span>
           <h3>Edit your files</h3>
-          <p>Use AeroRoom for RAW photography, AeroFilm for footage and AeroPhoto for composites or aircraft overlay graphics.</p>
+          <p>Use AeroRoom for RAW development, AeroEnhance for AI image restoration, AeroFilm for video and AeroPhoto for graphics.</p>
         </article>
         <article>
           <span>03</span>
@@ -193,7 +214,7 @@
           <h2>Download AeroStudio</h2>
         </div>
         <div>
-          <p class="section-lead">Choose the full-suite launcher or install apps individually. Windows builds are discovered live from the current GitHub release.</p>
+          <p class="section-lead">Choose the three-app launcher or download apps individually. AeroEnhance is currently a separate Windows CUDA beta, with its ZIP discovered from the same GitHub Release.</p>
           <p class="release-status"><span class="status-dot"></span><span id="release-status" role="status" aria-live="polite">Beta 0.1 · Download links ready</span></p>
         </div>
       </div>
@@ -201,7 +222,7 @@
         <div class="suite-banner-copy">
           <p class="mini-kicker">RECOMMENDED</p>
           <h3>AeroStudio Launcher</h3>
-          <p>Install and manage AeroRoom, AeroFilm and AeroPhoto from one place.</p>
+          <p>Install and manage AeroRoom, AeroFilm and AeroPhoto from one place. AeroEnhance is a separate download for this beta.</p>
           <div class="suite-facts"><span>Windows 10 / 11</span><span>64-bit</span><span>Free beta</span></div>
         </div>
         <div class="suite-banner-action">
@@ -230,6 +251,17 @@
           <div class="download-actions">
             <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/download/v0.1.0-beta.1/AeroPhoto-Windows.zip" class="download-action" data-asset="AeroPhoto-Windows.zip">Windows app</a>
             <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/download/v0.1.0-beta.1/AeroPhoto-Launcher-Windows.zip" class="download-action alt" data-asset="AeroPhoto-Launcher-Windows.zip">Individual launcher</a>
+          </div>
+        </article>
+        <article class="download-row" id="download-enhance">
+          <div class="download-copy">
+            <h3>AeroEnhance Studio <span class="showcase-tag">GPU BETA</span></h3>
+            <p>AI denoising, RAW support and high-precision TIFF export</p>
+            <p class="aeroenhance-state" id="aeroenhance-state" role="status" aria-live="polite">Checking the shared release for an AeroEnhance download…</p>
+          </div>
+          <div class="download-actions">
+            <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/tag/v0.1.0-beta.1" class="download-action" data-aeroenhance-variant="CUDA">CUDA ZIP · view release</a>
+            <a href="https://github.com/AeroStudiosWeb/AeroStudios/releases/tag/v0.1.0-beta.1" class="download-action alt" data-aeroenhance-variant="CPU" hidden>CPU ZIP</a>
           </div>
         </article>
       </div>
@@ -262,6 +294,7 @@
             <li>Refine AeroRoom’s photo workflow</li>
             <li>Expand AeroFilm aviation video tools</li>
             <li>Improve AeroPhoto overlay templates</li>
+              <li>Test AeroEnhance CUDA and AI model installation</li>
           </ul>
         </article>
         <article>
