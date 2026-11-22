@@ -6,7 +6,8 @@ publishes or signs a model. It never reads uncurated live submissions.
 param(
   [Parameter(Mandatory=$true)][string]$Dataset,
   [Parameter(Mandatory=$true)][string]$Runs,
-  [int]$Epochs = 20
+  [int]$Epochs = 20,
+  [string]$PairedDataset = ''
 )
 $ErrorActionPreference = 'Stop'
 $python = Join-Path $PSScriptRoot '.venv\Scripts\python.exe'
@@ -19,7 +20,17 @@ Push-Location $PSScriptRoot
 try {
   & $python -m aero_train.dataset_cli audit --dataset $Dataset
   if ($LASTEXITCODE -ne 0) { throw 'Dataset audit failed. Check withdrawal/expiry/licensing.' }
-  $hash = (Get-FileHash $manifest -Algorithm SHA256).Hash.ToLowerInvariant()
+  $hashes = @((Get-FileHash $manifest -Algorithm SHA256).Hash.ToLowerInvariant())
+  if ($PairedDataset) {
+    $pairedManifest = Join-Path $PairedDataset 'pairs.jsonl'
+    if (!(Test-Path $pairedManifest)) { throw "No paired manifest: $pairedManifest" }
+    $hashes += (Get-FileHash $pairedManifest -Algorithm SHA256).Hash.ToLowerInvariant()
+  }
+  $digest = [Security.Cryptography.SHA256]::Create()
+  try {
+    $bytes = [Text.Encoding]::UTF8.GetBytes(($hashes -join ':'))
+    $hash = ([BitConverter]::ToString($digest.ComputeHash($bytes))).Replace('-', '').ToLowerInvariant()
+  } finally { $digest.Dispose() }
   $marker = Join-Path $Runs 'last-private-cycle-sha256.txt'
   if ((Test-Path $marker) -and ((Get-Content $marker -Raw).Trim() -eq $hash)) {
     Write-Output 'No newly curated manifest; skipping GPU retraining.'
@@ -27,12 +38,10 @@ try {
   }
   $run = Join-Path $Runs (Get-Date -Format 'yyyyMMdd-HHmmss')
   New-Item -ItemType Directory -Force $run | Out-Null
-  & $python -m aero_train.pipeline train --dataset $Dataset --output $run --device cuda --epochs $Epochs --steps-per-epoch 200 --batch 4 --patch 128 --amp
-  if ($LASTEXITCODE -ne 0) { throw 'Training failed; no cycle marker written' }
-  & $python -m aero_train.pipeline evaluate --dataset $Dataset --checkpoint (Join-Path $run 'best.pt') --output (Join-Path $run 'heldout-report.json') --device cuda --patch 256
-  if ($LASTEXITCODE -ne 0) { throw 'Evaluation failed; no cycle marker written' }
-  & $python -m aero_train.pipeline export --checkpoint (Join-Path $run 'best.pt') --output (Join-Path $run 'aero-denoise.onnx')
-  if ($LASTEXITCODE -ne 0) { throw 'ONNX export failed; no cycle marker written' }
+  $flags = @('-Dataset',$Dataset,'-Output',$run,'-Epochs',$Epochs,'-Device','cuda')
+  if ($PairedDataset) { $flags += @('-PairedDataset',$PairedDataset) }
+  & (Join-Path $PSScriptRoot 'Run-AeroTraining.ps1') @flags
+  if (-not $?) { throw 'Complete training workflow failed; no cycle marker written' }
   Set-Content -Path $marker -Value $hash -NoNewline
   Write-Output "Private candidate created in $run. Review heldout-report.json. NOTHING was distributed."
 }

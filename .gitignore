@@ -25,3 +25,21 @@ release-out/
 training/data/
 training/output/
 training/checkpoints/
+# Private learning datasets/experiments (keep away from source and git)
+training/private/
+training/runs/
+training/datasets/
+training/paired-data/
+training/exports/
+**/heldout-report.json
+**/training-history.json
+**/comparison.json
+**/pairs.jsonl
+**/manifest.jsonl
+
+# Community learning: server secrets, feedback and scheduled outputs
+**/client-tokens.json
+**/private-feedback/
+**/weekly-cycles/
+**/community-models/
+**/*.signed-secret

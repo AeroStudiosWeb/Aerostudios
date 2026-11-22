@@ -1,4 +1,4 @@
-//! Private beta intake, NOT an AI training service.
+//! Opt-in community intake, NOT an AI training service.
 //! Designed to bind to 127.0.0.1, behind an authenticated HTTPS reverse proxy
 //! if remote users are ever enabled. Never expose this HTTP listener directly.
 use anyhow::{Context, Result};
@@ -27,9 +27,32 @@ fn internal() -> (StatusCode, String) { (StatusCode::INTERNAL_SERVER_ERROR, "Sto
 
 #[derive(Clone)]
 struct AppState {
-    token: Arc<String>,
+    beta_token: Option<Arc<String>>,
+    clients: Arc<Vec<ClientToken>>,
     data_dir: Arc<PathBuf>,
-    rate: Arc<Mutex<Vec<Instant>>>,
+    rate: Arc<Mutex<Vec<(Instant, String)>>>,
+}
+#[derive(Debug, Clone, Deserialize)]
+struct TokenFile { schema: u32, clients: Vec<ClientTokenRaw> }
+#[derive(Debug, Clone, Deserialize)]
+struct ClientTokenRaw { id: String, sha256: String, enabled: bool }
+#[derive(Debug, Clone)]
+struct ClientToken { id: String, digest: [u8;32] }
+fn load_client_tokens(path: &FsPath) -> Result<Vec<ClientToken>> {
+    let file: TokenFile = serde_json::from_slice(&std::fs::read(path)?)?;
+    anyhow::ensure!(file.schema == 1, "Unknown client-token file schema");
+    let mut seen = std::collections::HashSet::new();
+    let mut clients = Vec::new();
+    for c in file.clients {
+        anyhow::ensure!(!c.id.is_empty() && c.id.len() <= 60 &&
+            c.id.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_'),
+            "Invalid client token ID");
+        anyhow::ensure!(seen.insert(c.id.clone()), "Duplicate client token ID");
+        let digest: [u8;32] = hex::decode(&c.sha256)?.try_into()
+            .map_err(|_| anyhow::anyhow!("Invalid client token digest"))?;
+        if c.enabled { clients.push(ClientToken { id: c.id, digest }); }
+    }
+    Ok(clients)
 }
 #[derive(Debug, Deserialize)]
 struct Contribution {
@@ -66,16 +89,30 @@ struct StoredMeta {
 }
 fn now() -> u64 { SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs() }
 fn hash(bytes: &[u8]) -> String { hex::encode(Sha256::digest(bytes)) }
-fn authed(headers: &HeaderMap, token: &str) -> bool {
-    let h = headers.get(axum::http::header::AUTHORIZATION).and_then(|x| x.to_str().ok()).unwrap_or("");
-    let candidate = h.strip_prefix("Bearer ").unwrap_or("");
-    candidate.len() == token.len() && candidate.as_bytes().ct_eq(token.as_bytes()).into()
+fn auth_identity(headers: &HeaderMap, state: &AppState) -> Option<String> {
+    let h = headers.get(axum::http::header::AUTHORIZATION).and_then(|x| x.to_str().ok())?;
+    let candidate = h.strip_prefix("Bearer ")?;
+    if candidate.len() < 32 || candidate.len() > 256 { return None; }
+    if let Some(beta) = &state.beta_token {
+        if candidate.len() == beta.len() && candidate.as_bytes().ct_eq(beta.as_bytes()).unwrap_u8() == 1 {
+            return Some("local-beta".to_string());
+        }
+    }
+    let digest = Sha256::digest(candidate.as_bytes());
+    for c in state.clients.iter() {
+        if digest.as_slice().ct_eq(&c.digest).unwrap_u8() == 1 {
+            return Some(c.id.clone());
+        }
+    }
+    None
 }
-async fn allow_rate(state: &AppState) -> bool {
+async fn allow_rate(state: &AppState, identity: &str) -> bool {
     let mut recent = state.rate.lock().await;
-    recent.retain(|t| t.elapsed() < Duration::from_secs(60));
-    if recent.len() >= 30 { return false; }
-    recent.push(Instant::now());
+    recent.retain(|(t,_)| t.elapsed() < Duration::from_secs(60));
+    if recent.len() >= 120 || recent.iter().filter(|(_,id)| id == identity).count() >= 10 {
+        return false;
+    }
+    recent.push((Instant::now(),identity.to_string()));
     true
 }
 fn valid_label(s: &str, max: usize) -> bool {
@@ -101,8 +138,8 @@ fn scrub_png(data_b64: &str) -> ApiResult<Vec<u8>> {
 }
 
 async fn submit(State(state): State<AppState>, headers: HeaderMap, Json(c): Json<Contribution>) -> ApiResult<(StatusCode, Json<Receipt>)> {
-    if !authed(&headers, &state.token) { return Err((StatusCode::UNAUTHORIZED, "Beta token required".into())); }
-    if !allow_rate(&state).await { return Err((StatusCode::TOO_MANY_REQUESTS, "Too many requests".into())); }
+    let identity = auth_identity(&headers, &state).ok_or_else(|| (StatusCode::UNAUTHORIZED, "Valid client token required".into()))?;
+    if !allow_rate(&state, &identity).await { return Err((StatusCode::TOO_MANY_REQUESTS, "Too many requests".into())); }
     if c.consent_version != CONSENT && c.consent_version != LEGACY_CONSENT { return Err(bad("Consent version not accepted")); }
     if c.training_permission && c.consent_version != CONSENT { return Err(bad("Training grant requires updated consent")); }
     if !valid_label(&c.model_label, 100) || !valid_label(&c.note, 400) || !valid_label(&c.app_version, 50) { return Err(bad("Invalid metadata length")); }
@@ -139,7 +176,7 @@ async fn submit(State(state): State<AppState>, headers: HeaderMap, Json(c): Json
     Ok((StatusCode::CREATED, Json(Receipt { id, deletion_secret: secret_hex })))
 }
 async fn remove(State(state): State<AppState>, Path(id): Path<String>, headers: HeaderMap) -> ApiResult<StatusCode> {
-    if !authed(&headers, &state.token) { return Err((StatusCode::UNAUTHORIZED, "Beta token required".into())); }
+    if auth_identity(&headers, &state).is_none() { return Err((StatusCode::UNAUTHORIZED, "Valid client token required".into())); }
     // Canonical UUID constrains path segments; prevents path traversal.
     let parsed = Uuid::parse_str(&id).map_err(|_| bad("Invalid receipt id"))?;
     if parsed.to_string() != id { return Err(bad("Invalid receipt id")); }
@@ -169,12 +206,20 @@ async fn cleanup(dir: &FsPath) -> Result<usize> {
 }
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Fail closed without explicit operator configuration.
-    let token = std::env::var("AERO_BETA_TOKEN").context("Set AERO_BETA_TOKEN (random 32+ characters) before starting")?;
-    anyhow::ensure!(token.len() >= 32, "AERO_BETA_TOKEN must be at least 32 characters");
+    // For community pilot: issue individual access tokens and store only SHA-256 digests.
+    // Never put a universal secret in the desktop binary.
+    let beta_token = std::env::var("AERO_BETA_TOKEN").ok().filter(|s| !s.is_empty());
+    if let Some(token) = &beta_token { anyhow::ensure!(token.len() >= 32, "AERO_BETA_TOKEN must be at least 32 characters"); }
+    let clients = match std::env::var("AERO_CLIENT_TOKENS_FILE") {
+        Ok(path) if !path.is_empty() => load_client_tokens(FsPath::new(&path))?,
+        _ => Vec::new(),
+    };
+    anyhow::ensure!(beta_token.is_some() || !clients.is_empty(),
+        "Configure AERO_CLIENT_TOKENS_FILE for per-user access, or AERO_BETA_TOKEN for local private tests");
     let dir = PathBuf::from(std::env::var("AERO_FEEDBACK_DIR").unwrap_or_else(|_| "./private-feedback".into()));
     tokio::fs::create_dir_all(&dir).await?;
-    let state = AppState { token: Arc::new(token), data_dir: Arc::new(dir.clone()), rate: Arc::new(Mutex::new(Vec::new())) };
+    let state = AppState { beta_token: beta_token.map(Arc::new), clients: Arc::new(clients),
+        data_dir: Arc::new(dir.clone()), rate: Arc::new(Mutex::new(Vec::new())) };
     let app = Router::new()
         .route("/health", get(health))
         .route("/v1/contributions", post(submit))
@@ -196,7 +241,21 @@ mod tests {
     use super::*;
     #[test]
     fn unauthorized_without_beta_token() {
-        assert!(!authed(&HeaderMap::new(), "abcdefghijklmnopqrstuvwxyz012345"));
+        let state = AppState { beta_token: Some(Arc::new("abcdefghijklmnopqrstuvwxyz012345".into())),
+            clients: Arc::new(vec![]), data_dir: Arc::new(PathBuf::new()),
+            rate: Arc::new(Mutex::new(Vec::new())) };
+        assert!(auth_identity(&HeaderMap::new(), &state).is_none());
+    }
+    #[test]
+    fn per_user_token_is_verified_without_storing_plaintext() {
+        let digest: [u8;32] = Sha256::digest(b"01234567890123456789012345678901").into();
+        let state = AppState { beta_token: None, clients: Arc::new(vec![ClientToken{id:"beta-user-1".into(), digest}]),
+            data_dir: Arc::new(PathBuf::new()), rate: Arc::new(Mutex::new(Vec::new())) };
+        let mut headers=HeaderMap::new();
+        headers.insert(axum::http::header::AUTHORIZATION, "Bearer 01234567890123456789012345678901".parse().unwrap());
+        assert_eq!(auth_identity(&headers,&state),Some("beta-user-1".into()));
+        headers.insert(axum::http::header::AUTHORIZATION, "Bearer 01234567890123456789012345678900".parse().unwrap());
+        assert!(auth_identity(&headers,&state).is_none());
     }
     #[test]
     fn rejects_invalid_png() {

@@ -1,0 +1,35 @@
+AeroStudios General-Photo Downloader v0.7.3 — RESUME FIX
+
+Cause: earlier download versions called verify_downloads() on an unfinished
+source ledger. That verifier demanded three creator groups even when the
+downloader was supposed to fetch more creators.
+
+Fix: during resume, all existing files, paths, hashes, and licence metadata are
+still verified, but no three-creator threshold is imposed until dataset
+verification/import. The import stage still requires 30 approved photos and
+at least three distinct creator groups.
+
+To update: copy this repository's source files over your existing source
+without deleting the local training/.venv, dist, release-out, or
+E:\AeroPrivate directories.
+
+From the repository root, run:
+
+powershell -NoProfile -ExecutionPolicy Bypass `
+  -File .\training\Build-General-Dataset.ps1 `
+  -Phase Download `
+  -Workspace "E:\AeroPrivate" `
+  -TargetImages 500 `
+  -Contact "YOUR_REAL_EMAIL@example.com" `
+  -LicenseMode CC0 `
+  -Discovery Auto `
+  -MaxPerCreator 30
+
+Replace the email with your real contact address. Do not discard the
+existing source-ledger.jsonl or SOURCE_LICENSE_REVIEW.csv. Review licence
+and image quality before running Import. Output includes diagnostics that
+can explain a low yield even after this fix.
+
+Offline tests: python -m unittest discover -s tests -v
+Result: 21 passed, including the regression for a two-creator resume.
+Not verified: live Wikimedia download or Windows CUDA training.

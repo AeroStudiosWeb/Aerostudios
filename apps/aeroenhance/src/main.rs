@@ -2,6 +2,8 @@
 
 mod process;
 mod raw_bridge;
+#[cfg(feature = "aeroroom-raw")]
+mod raw_look;
 mod network;
 #[cfg(feature = "ai")]
 mod ai;
@@ -66,6 +68,7 @@ struct Studio {
     feedback_message: String,
     last_receipt: Option<network::Receipt>,
     last_processed: Option<(usize, RgbImage)>,
+    installed_models: Vec<(String, PathBuf)>,
 }
 
 fn to_texture(ctx: &egui::Context, name: String, img: &RgbImage) -> TextureHandle {
@@ -96,6 +99,54 @@ fn find_default_model() -> Option<PathBuf> {
         let data = dir.join("scunet_color_real_psnr.onnx.data");
         if model.is_file() && data.is_file() { Some(model) } else { None }
     })
+}
+
+// Discover SCUNet and locally exported AeroDenoiseNet models. Trained-model
+// entries are only offered by the picker when their export sidecar and SHA-256
+// match; unsigned models are NOT treated as signed automatic updates.
+fn installed_ai_models() -> Vec<(String, PathBuf)> {
+    use sha2::{Digest, Sha256};
+    use std::io::Read;
+    let mut found = Vec::<(String, PathBuf)>::new();
+    if let Some(scunet) = find_default_model() {
+        found.push(("SCUNet (pretrained)".to_owned(), scunet));
+    }
+    if let Ok(base) = network::model_dir() {
+        if let Ok(versions) = std::fs::read_dir(base.join("aero-denoise")) {
+            for entry in versions.flatten() {
+                if !entry.file_type().is_ok_and(|kind| kind.is_dir() && !kind.is_symlink()) { continue; }
+                let version = entry.file_name().to_string_lossy().into_owned();
+                if version.is_empty() || version.len() > 80 ||
+                    !version.bytes().all(|b| b.is_ascii_alphanumeric() || matches!(b, b'.' | b'-')) {
+                    continue;
+                }
+                let model = entry.path().join("aero-denoise.onnx");
+                let proof = entry.path().join("aero-denoise.onnx.validation.json");
+                if !model.is_file() || !proof.is_file() { continue; }
+                let expected = std::fs::read(&proof).ok()
+                    .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
+                    .and_then(|value| value.get("sha256").and_then(|s| s.as_str()).map(str::to_owned));
+                let Some(expected) = expected else { continue; };
+                if expected.len() != 64 || !expected.bytes().all(|b| b.is_ascii_hexdigit()) { continue; }
+                let Ok(mut f) = std::fs::File::open(&model) else { continue; };
+                let mut hasher = Sha256::new();
+                let mut buffer = [0u8; 128 * 1024];
+                let mut good = true;
+                loop {
+                    match f.read(&mut buffer) {
+                        Ok(0) => break,
+                        Ok(n) => hasher.update(&buffer[..n]),
+                        Err(_) => { good = false; break; }
+                    }
+                }
+                if good && hex::encode(hasher.finalize()).eq_ignore_ascii_case(&expected) {
+                    found.push((format!("AeroDenoiseNet {version} (local, experimental)"), model));
+                }
+            }
+        }
+    }
+    found.sort_by(|a,b| a.0.cmp(&b.0));
+    found
 }
 
 impl Studio {
@@ -143,6 +194,7 @@ impl Studio {
             review: None, approve_example: false, training_permission: false, feedback_busy: false,
             feedback_message: "No feedback sent".into(), last_receipt: None,
             last_processed: None,
+            installed_models: installed_ai_models(),
         }
     }
 
@@ -553,11 +605,31 @@ impl eframe::App for Studio {
                     }
                 }
             });
+            ui.horizontal(|ui| {
+                if ui.button("Refresh local models").clicked() {
+                    self.installed_models = installed_ai_models();
+                    self.update_message = format!("Found {} installed model(s). Locally trained ONNX models require matching export checksums.", self.installed_models.len());
+                }
+                let models = self.installed_models.clone();
+                egui::ComboBox::from_id_salt("local_ai_model_selector")
+                    .selected_text("Choose installed AI model")
+                    .show_ui(ui, |ui| {
+                        for (name, path) in models {
+                            let next = path.to_string_lossy().into_owned();
+                            if ui.selectable_label(self.settings.ai_model_path == next, &name).clicked() {
+                                self.settings.ai_model_path = next;
+                                self.update_message = format!("Selected {name}. Enable neural model to use it.");
+                                dirty = true;
+                            }
+                        }
+                    });
+            });
+            ui.small("Select SCUNet or a verified, privately trained AeroDenoiseNet model. Training and publishing never happen inside AeroEnhance.");
             dirty |= ui.add(egui::Slider::new(&mut self.settings.ai_blend, 0.0..=1.0).text("AI blend")).changed();
             ui.small("Model must accept NCHW float32 RGB 256×256 and return RGB at 1×/2×/4×.");
             ui.separator();
-            ui.heading("Private beta updates");
-            ui.small("Signed manifests only. No background requests unless you opt in.");
+            ui.heading("Community AI model updates (opt-in pilot)");
+            ui.small("Opt-in, verified model updates. You can receive improvements without contributing photographs.");
             let mut save = false;
             save |= ui.checkbox(&mut self.prefs.check_updates_at_launch, "Check for updates on startup").changed();
             save |= ui.checkbox(&mut self.prefs.auto_install_models, "Automatically install verified beta models").changed();
@@ -591,20 +663,20 @@ impl eframe::App for Studio {
                 }
             }
             ui.separator();
-            ui.heading("Help improve AeroEnhance");
+            ui.heading("Help train the shared AeroEnhance AI (optional)");
             if ui.checkbox(&mut self.prefs.contribute_enabled, "Allow me to send approved feedback").changed() {
                 if let Err(e) = network::save_preferences(&self.prefs) {
                     self.feedback_message = format!("Could not save preferences: {e}");
                 }
             }
-            ui.small("OFF by default. Nothing uploads automatically. A private beta token is required.");
-            ui.small("Ratings/approved previews are stored for up to 30 days. Image use for AI training needs a SEPARATE opt-in below; deleting a contribution cannot reverse a model already trained.");
+            ui.small("OFF by default. Only feedback you explicitly submit is sent; photographs are never collected in the background. A pilot invitation token is required.");
+            ui.small("Ratings and approved previews are retained for up to 30 days. Training permission requires a separate opt-in. Weekly updates happen only after curation and quality review; withdrawing data cannot undo training already published.");
             ui.add_enabled_ui(self.prefs.contribute_enabled, |ui| {
-                ui.label("Private feedback server URL");
+                ui.label("Community pilot feedback HTTPS URL (or local test server)");
                 if ui.text_edit_singleline(&mut self.prefs.feedback_url).changed() {
                     let _ = network::save_preferences(&self.prefs);
                 }
-                ui.label("Beta access token (memory only)");
+                ui.label("Personal pilot access token (memory only)");
                 ui.add(egui::TextEdit::singleline(&mut self.beta_token).password(true));
                 ui.label("Quality rating");
                 egui::ComboBox::from_id_salt("feedback_rating")

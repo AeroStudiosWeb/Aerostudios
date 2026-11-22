@@ -7,16 +7,9 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageOps
 from .high_precision import read_rgb16_tiff
+from .hashutil import sha256_file  # Keep existing aero_train.data.sha256_file import compatible.
 from torch.utils.data import Dataset
 import torch
-
-
-def sha256_file(path: Path) -> str:
-    dig = hashlib.sha256()
-    with path.open('rb') as f:
-        for block in iter(lambda: f.read(1024 * 1024), b''):
-            dig.update(block)
-    return dig.hexdigest()
 
 
 def check_record(item: dict, *, verify_hash: bool = True) -> None:
@@ -60,14 +53,51 @@ def load_manifest(path: Path, *, verify_hash: bool = True) -> list[dict]:
 
 
 def grouped_split(records: list[dict]) -> dict[str, list[dict]]:
-    groups = sorted({r['group'] for r in records}, key=lambda s: hashlib.sha256(s.encode()).hexdigest())
-    if len(groups) < 3:
+    """Deterministic, *group-isolated* size-aware train/val/test split.
+
+    With only three sessions the two smallest are held out. With a larger
+    corpus, aim to reserve ~10%% of photographs per holdout while keeping most
+    images available for training. The chosen split is fingerprinted into new
+    training checkpoints, so changing group sizes cannot silently resume.
+    """
+    by_group = {}
+    for r in records:
+        by_group.setdefault(r['group'], []).append(r)
+    if len(by_group) < 3:
         raise ValueError('Need at least THREE distinct photographer/session groups for independent train/val/test sets')
-    # Stable assignments. Changing the source group collection requires retraining.
-    test_group, val_group = groups[:2]
+    tie = lambda g: hashlib.sha256(g.encode()).hexdigest()
+    groups = sorted(by_group, key=tie)
+    total = len(records)
     labels = {g: 'train' for g in groups}
-    labels[test_group], labels[val_group] = 'test', 'val'
-    split = {k: [] for k in ('train','val','test')}
+    if len(groups) == 3:
+        # Avoid the old failure mode, where hashing sometimes assigned the
+        # 3-photo session as the *only* training session.
+        smallest = sorted(groups, key=lambda g: (len(by_group[g]), tie(g)))
+        labels[smallest[0]] = 'test'
+        labels[smallest[1]] = 'val'
+    else:
+        remaining = set(groups)
+        target = max(10, int(total * 0.1))
+        for split_name in ('test', 'val'):
+            selected = []
+            count = 0
+            # Always reserve one group for the other holdout and one for train.
+            reserved = 2 if split_name == 'test' else 1
+            while len(remaining) > reserved and (count < target or not selected):
+                options = sorted(remaining, key=lambda g: (
+                    abs(target - count - len(by_group[g])),
+                    len(by_group[g]), tie(g)))
+                chosen = options[0]
+                # Do not take an enormous creator group just to fill a holdout;
+                # if it is unavoidable, the dataset audit shows the problem.
+                if selected and count >= max(1, int(target * 0.6)) and count + len(by_group[chosen]) > target * 1.25:
+                    break
+                remaining.remove(chosen)
+                selected.append(chosen)
+                count += len(by_group[chosen])
+            for group in selected:
+                labels[group] = split_name
+    split = {k: [] for k in ('train', 'val', 'test')}
     for rec in records:
         split[labels[rec['group']]].append(rec)
     return split

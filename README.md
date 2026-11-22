@@ -1,3 +1,15 @@
+**RAW colour correction:** See `AEROROOM_RAW_COLOUR_FIX_READ_ME_FIRST.md` for the experimental AeroRoom-style vendor RAW colour look and Windows rebuild steps.
+
+> **NEW — Community AI Learning pilot (source update):** AeroEnhance now includes opt-in multi-user contribution invitations, a deny-by-default weekly review workflow, checkpoint-based fine-tuning, independent incumbent-vs-candidate quality comparisons, and human-gated unsigned release staging. **Not a live worldwide learning service:** secure hosting, onboarding, signature-key deployment, Windows validation, and public model distribution must still be configured. Start with [`AERO_COMMUNITY_LEARNING_READ_ME_FIRST.md`](AERO_COMMUNITY_LEARNING_READ_ME_FIRST.md). The existing 40-epoch run can finish unchanged.
+
+> **Experimental AI training (2026):** The repo now includes a unified offline GPU dataset→training→holdout→ONNX→comparison workflow and a local AeroDenoiseNet model picker. It does **not** include trained proprietary weights, automatic learning from users or a public model release. Read [`training/AERO_DENOISE_END_TO_END.md`](training/AERO_DENOISE_END_TO_END.md).
+
+# AeroStudios — four-app creative suite
+
+**Website update (November 2026):** The public website is now multi-page, with dedicated pages for AeroRoom, AeroEnhance, AeroPhoto and AeroFilm, plus a download centre and getting-started guide. See [`docs/SITE_GUIDE.md`](docs/SITE_GUIDE.md) for the current site layout, GitHub Pages publishing instructions and AeroEnhance's required one-time SCUNet model setup. The unified launcher supports all four apps.
+
+---
+
 # AeroStudio — GitHub Website & Windows Downloads
 
 This is a ready-to-publish **GitHub Pages website** and **Windows release-packaging kit** for the three AeroStudio apps:
@@ -101,3 +113,12 @@ release-out/                    Generated locally; never commit to website repo
 ## AeroEnhance in unified launcher
 
 The unified Windows launcher now lists **four applications**, including AeroEnhance Studio. For updating the existing shared GitHub Release *without rebuilding the other apps*, see [`UNIFIED_LAUNCHER_AEROENHANCE.md`](UNIFIED_LAUNCHER_AEROENHANCE.md).
+
+
+## AeroEnhance general AI pretraining (experimental)
+
+See [training/AERO_GENERAL_PRETRAINING.md](training/AERO_GENERAL_PRETRAINING.md)
+for a complete Windows RTX 3080 workflow: source/rights review, creator-grouped
+general photography pretraining, independent aviation-detail comparison, ONNX
+export and local-only testing. No externally sourced photographs or pretrained
+AeroStudios weights are bundled in this repository.

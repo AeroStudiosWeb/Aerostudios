@@ -1,3 +1,25 @@
+# AeroEnhance training — v0.7 general pretraining
+
+**START HERE:** [AERO_GENERAL_PRETRAINING.md](AERO_GENERAL_PRETRAINING.md) explains
+how to discover explicitly licensed external photographs, individually approve
+the source ledger, import a creator-grouped general dataset, run GPU training,
+evaluate on your existing small aviation dataset WITHOUT training on it, resume
+checkpoints, and optionally install an experimental ONNX model locally.
+
+The previous v0.6 private clean/paired/feedback workflow is retained below.
+The v0.7 checkpoint fingerprint deliberately changes because the creator-group
+splitting strategy was corrected; do not resume a v0.6 checkpoint with v0.7.
+
+---
+
+# Current end-to-end training guide (v0.6)
+
+**Start with [`AERO_DENOISE_END_TO_END.md`](AERO_DENOISE_END_TO_END.md).** It covers one-command training, aligned clean/noisy datasets, hold-out comparisons, local model installation, and privacy.
+
+The earlier v0.5 notes are retained below for background; where commands differ, follow the v0.6 guide.
+
+---
+
 # AeroEnhance Learning Network — real training (v0.5 private alpha)
 
 This folder is the **offline GPU training component** of AeroEnhance Studio. The desktop application and feedback backend are **Rust**. **Python/PyTorch are required only on the training computer**. Nothing here ships to end users. Model training does **not** happen whenever somebody processes a photo; it happens when the operator curates licensed data and launches training. New models are distributed by the existing Ed25519-signed ONNX updater only after evaluation and explicit release approval.

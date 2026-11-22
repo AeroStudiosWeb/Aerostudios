@@ -74,6 +74,58 @@ def import_clean(args):
     print(f'Imported {n} distinct clean reference photos. Dataset: {dest / "manifest.jsonl"}')
 
 
+def import_library(args):
+    """One import operation for session-separated clean reference collections."""
+    if not args.rights_confirmed:
+        raise ValueError('Explicit --rights-confirmed required')
+    root = Path(args.input)
+    if not root.is_dir():
+        raise ValueError('Clean-library root does not exist')
+    sessions = sorted(d for d in root.iterdir() if d.is_dir() and not d.is_symlink())
+    if len(sessions) < 3:
+        raise ValueError('Organise clean photos into at least THREE separate session folders')
+    for session in sessions:
+        if not re.fullmatch(r'[A-Za-z0-9_-]{1,80}',session.name):
+            raise ValueError('Session folder names must be anonymised letters/numbers/hyphen/underscore: '+session.name)
+        import_clean(argparse.Namespace(input=str(session),dataset=args.dataset,
+                    rights_confirmed=True,group=session.name,min_side=args.min_side))
+    print('Finished private session-separated import. Run dataset_cli audit next.')
+
+
+def import_approved(args):
+    """Import ONLY individually approved external source images, grouped by creator."""
+    if not args.rights_confirmed:
+        raise ValueError('Explicit --rights-confirmed required before training on external photos')
+    from .commons import approved_entries
+    source=Path(args.source).resolve()
+    selected=approved_entries(source,minimum=30)
+    dest=Path(args.dataset)
+    samples=dest/'clean';samples.mkdir(parents=True,exist_ok=True)
+    manifest=dest/'manifest.jsonl'
+    records=[]
+    old=set()
+    if manifest.is_file():
+        old={json.loads(line).get('original_file_sha256') for line in manifest.read_text(encoding='utf-8').splitlines() if line.strip()}
+    for e in selected:
+        if e['sha256'] in old:
+            continue
+        file=Path(e['local_path'])
+        with Image.open(file) as f:
+            rgb=ImageOps.exif_transpose(f).convert('RGB')
+        if min(rgb.size)<args.min_side:continue
+        new_path=samples/(str(uuid.uuid4())+'.png')
+        rgb.save(new_path,format='PNG')
+        records.append({'path':str(new_path.resolve()),'sha256':sha256_file(new_path),
+            'group':e['group'],'source':'operator-approved-wikimedia',
+            'original_file_sha256':e['sha256'],'source_file_page':e['file_page'],
+            'source_creator':e['creator'],'source_license':e['license'],
+            'source_license_url':e['license_url'],
+            'source_ledger':str((source/'source-ledger.jsonl').resolve()),
+            'license':LICENSE})
+    count=add_entries(manifest,records)
+    print(f'Imported {count} approved general-reference photos. Review ledger retained at: {source}')
+
+
 def feedback_review(args):
     # Operator can inspect image files locally before editing this table.
     storage=Path(args.feedback_dir)
@@ -146,6 +198,14 @@ def main():
     c.add_argument('--group',required=True,help='Anonymised photographer/session identifier')
     c.add_argument('--rights-confirmed',action='store_true'); c.add_argument('--min-side',type=int,default=256)
     c.set_defaults(func=import_clean)
+    lib=sub.add_parser('import-library',help='Import a folder containing subfolders, one per session')
+    lib.add_argument('--input',required=True);lib.add_argument('--dataset',required=True)
+    lib.add_argument('--rights-confirmed',action='store_true');lib.add_argument('--min-side',type=int,default=256)
+    lib.set_defaults(func=import_library)
+    ext=sub.add_parser('import-approved',help='Import ONLY individually approved Commons image sources')
+    ext.add_argument('--source',required=True);ext.add_argument('--dataset',required=True)
+    ext.add_argument('--rights-confirmed',action='store_true');ext.add_argument('--min-side',type=int,default=256)
+    ext.set_defaults(func=import_approved)
     r=sub.add_parser('review-feedback',help='Generate a deny-by-default manual curator CSV')
     r.add_argument('--feedback-dir',required=True);r.add_argument('--output',required=True);r.set_defaults(func=feedback_review)
     r=sub.add_parser('curate-feedback',help='Add curator-confirmed, explicitly licensed clean examples')

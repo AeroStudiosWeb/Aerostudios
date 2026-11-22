@@ -8,3 +8,5 @@ onnxruntime>=1.18,<2
 
 # Preserve RGB16 TIFF clean references end-to-end (training only).
 tifffile>=2024.2,<2028
+# Current torch ONNX export tooling (kept in the private training venv only)
+onnxscript>=0.2,<1
