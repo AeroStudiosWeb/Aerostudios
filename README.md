@@ -96,3 +96,8 @@ release-out/                    Generated locally; never commit to website repo
 ```
 
 **Website and launcher kit prepared for AeroStudio.** The underlying applications are independent forks of LightCraft, FilmCraft and PhotoCraft. See `LICENSING.md` and include original copyright notices in public distributions.
+
+
+## AeroEnhance in unified launcher
+
+The unified Windows launcher now lists **four applications**, including AeroEnhance Studio. For updating the existing shared GitHub Release *without rebuilding the other apps*, see [`UNIFIED_LAUNCHER_AEROENHANCE.md`](UNIFIED_LAUNCHER_AEROENHANCE.md).

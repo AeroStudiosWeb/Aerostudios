@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][ValidateSet('AeroRoom','AeroFilm','AeroPhoto')][string]$App)
+param([Parameter(Mandatory=$true)][ValidateSet('AeroRoom','AeroFilm','AeroPhoto','AeroEnhance')][string]$App)
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -8,6 +8,7 @@ $Details = @{
  AeroRoom  = @{Name='AeroRoom Studio';Role='RAW photography and aviation presets';Exe='AeroRoomStudio.exe'}
  AeroFilm  = @{Name='AeroFilm Studio';Role='Aviation video editing';Exe='AeroFilmStudio.exe'}
  AeroPhoto = @{Name='AeroPhoto Studio';Role='Aircraft graphics and compositing';Exe='AeroPhotoStudio.exe'}
+ AeroEnhance = @{Name='AeroEnhance Studio';Role='AI denoise, RAW enhancement and 16-bit TIFF';Exe='AeroEnhance-Studio.exe'}
 }
 $Detail = $Details[$App]
 $Manifest = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'releases.json') -Raw | ConvertFrom-Json
