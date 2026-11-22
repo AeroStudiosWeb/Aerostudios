@@ -710,9 +710,25 @@ impl eframe::App for Studio {
     }
 }
 
+// Use the same artwork for the titlebar/taskbar and the Windows executable icon.
+// It is embedded at compile time so model/installer paths are unaffected.
+fn app_window_icon() -> egui::IconData {
+    let decoded = image::load_from_memory(include_bytes!("../assets/aeroenhance-icon.png"))
+        .expect("Bundled AeroEnhance icon PNG must be valid")
+        .into_rgba8();
+    egui::IconData {
+        width: decoded.width(),
+        height: decoded.height(),
+        rgba: decoded.into_raw(),
+    }
+}
+
 fn main() -> eframe::Result {
     let options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default().with_inner_size([1420.0, 860.0]).with_min_inner_size([960.0, 620.0]),
+        viewport: egui::ViewportBuilder::default()
+            .with_inner_size([1420.0, 860.0])
+            .with_min_inner_size([960.0, 620.0])
+            .with_icon(app_window_icon()),
         ..Default::default()
     };
     eframe::run_native("AeroEnhance Studio — AeroStudios", options,

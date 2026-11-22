@@ -67,6 +67,11 @@ function Copy-LauncherCore([string]$Destination) {
     New-Item -ItemType Directory -Force -Path (Split-Path $dest -Parent) | Out-Null
     Copy-Item -LiteralPath $source -Destination $dest
   }
+  # The four-app launcher renders a matching icon for AeroEnhance, too.
+  $enhanceIcon = 'Apps\AeroEnhance\assets\aerostudio\icon.png'
+  $enhanceTarget = Join-Path $Destination $enhanceIcon
+  New-Item -ItemType Directory -Force -Path (Split-Path $enhanceTarget -Parent) | Out-Null
+  Copy-Item -LiteralPath (Join-Path $Template $enhanceIcon) -Destination $enhanceTarget
 }
 try {
   Write-Host 'Checking Windows executables...' -ForegroundColor Cyan

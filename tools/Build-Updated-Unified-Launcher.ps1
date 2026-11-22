@@ -133,6 +133,12 @@ try {
         New-Item -ItemType Directory -Force -Path (Split-Path $dst -Parent) | Out-Null
         Copy-Item -LiteralPath $src -Destination $dst
     }
+    # Include the AeroEnhance card artwork alongside the three existing app icons.
+    $enhanceIcon = 'Apps/AeroEnhance/assets/aerostudio/icon.png'
+    $enhanceSrc = Join-Path $Template $enhanceIcon
+    $enhanceDst = Join-Path $stage $enhanceIcon
+    New-Item -ItemType Directory -Force -Path (Split-Path $enhanceDst -Parent) | Out-Null
+    Copy-Item -LiteralPath $enhanceSrc -Destination $enhanceDst
     @(
         'AeroStudio Unified Windows Launcher - four apps',
         'Double-click AeroStudio.cmd.',
