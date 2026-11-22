@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Refresh ONLY AeroStudio-Launcher-Windows.zip, adding AeroEnhance to the existing shared GitHub release.
 .DESCRIPTION
@@ -39,15 +39,31 @@ if ($enhanceAsset -notmatch '^AeroEnhance-v[\w.+-]+-Windows-x64-(CUDA|CPU)\.zip$
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $inputZip = [IO.Compression.ZipFile]::OpenRead($AeroEnhanceZip)
 try {
-    $contents = @($inputZip.Entries | ForEach-Object {$_.FullName.Replace('\\','/')})
-    if (@($contents | Where-Object {$_ -eq 'AeroEnhance-Studio/AeroEnhance-Studio.exe'}).Count -ne 1) {
-        throw 'AeroEnhance ZIP must have AeroEnhance-Studio/AeroEnhance-Studio.exe. Run the CUDA packaging script, not the source-archive script.'
+    # The installer can handle an extra wrapping folder in a release ZIP.
+    # Identify the actual executable and validate the DLLs next to it instead of
+    # requiring one exact archive root. Never trust a ZIP based on its filename.
+    $files = @($inputZip.Entries | Where-Object { -not $_.FullName.EndsWith('/') })
+    $executables = @($files | Where-Object {
+        $entryName = $_.FullName.Replace('\', '/')
+        [IO.Path]::GetFileName($entryName) -ieq 'AeroEnhance-Studio.exe'
+    })
+    if ($executables.Count -ne 1) {
+        $example = (@($files | Select-Object -First 25 | ForEach-Object { $_.FullName }) -join '; ')
+        throw "AeroEnhance ZIP must contain exactly one AeroEnhance-Studio.exe; found $($executables.Count). Selected archive: $AeroEnhanceZip. First entries: $example"
     }
+    $executableEntry = $executables[0].FullName.Replace('\', '/')
+    $parentPrefix = $executableEntry.Substring(0, $executableEntry.Length - 'AeroEnhance-Studio.exe'.Length)
     if ($enhanceAsset -match '-CUDA\.zip$') {
         foreach ($name in @('onnxruntime_providers_cuda.dll','onnxruntime_providers_shared.dll')) {
-            if (-not ($contents -contains "AeroEnhance-Studio/$name")) { throw "CUDA ZIP missing required $name" }
+            $requiredEntry = "$parentPrefix$name"
+            $matching = @($files | Where-Object { $_.FullName.Replace('\', '/') -ieq $requiredEntry })
+            if ($matching.Count -ne 1) {
+                $dllNames = @($files | Where-Object { $_.FullName -match '(?i)onnxruntime.*\.dll$' } | ForEach-Object { $_.FullName }) -join '; '
+                throw "Incomplete CUDA ZIP: expected $requiredEntry beside $executableEntry, found $($matching.Count). DLL entries: $dllNames. Repackage from the compiled build; do not publish this ZIP."
+            }
         }
     }
+    Write-Host "Validated AeroEnhance executable: $executableEntry" -ForegroundColor Green
 } finally { $inputZip.Dispose() }
 New-Item -ItemType Directory -Force -Path $OutputDirectory | Out-Null
 $Base = "https://github.com/$Owner/$Repository/releases/download/$Tag"
