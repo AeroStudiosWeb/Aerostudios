@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+*.pt
+*.onnx
+*.validation.json
+*.part
+training-output/
+private-dataset/
+feedback-review*.csv
+candidate*.json
+heldout-*.json

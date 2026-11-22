@@ -1,0 +1,13 @@
+[package]
+name = "aeroenhance-update-signer"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[dependencies]
+anyhow = "1"
+ed25519-dalek = "2.2"
+base64 = "0.22"
+hex = "0.4"
+serde_json = "1"
+getrandom = "0.3"

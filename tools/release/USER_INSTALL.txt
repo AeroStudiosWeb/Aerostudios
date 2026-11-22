@@ -1,0 +1,18 @@
+AeroEnhance Studio Windows x64 PRIVATE BETA
+============================================
+Extract the entire ZIP and run Start-AeroEnhance.bat. Keep the EXE and CUDA provider DLLs together.
+The project currently uses ort 2.0.0-rc.15: the main ONNX Runtime is statically linked into the executable. No standalone onnxruntime.dll is expected.
+Install the Microsoft Visual C++ x64 redistributable if missing:
+https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist
+
+ONNX model weights are NOT included. Run download-scunet-model.bat and then
+select models\scunet_color_real_psnr.onnx in the application. Keep .onnx.data
+beside the ONNX file. Check the upstream model licence before use.
+
+CUDA variant: requires a compatible NVIDIA driver, CUDA and cuDNN libraries.
+They are NOT bundled. Run diagnose-gpu.bat and then select CUDA Strict in the app
+to confirm GPU activation. You may need NVIDIA CUDA/cuDNN installation/configuration.
+https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html
+
+RAW support depends on camera/compression variant. Feedback/updates are opt-in.
+This is not a public release. Test on a fresh PC before enabling website downloads.

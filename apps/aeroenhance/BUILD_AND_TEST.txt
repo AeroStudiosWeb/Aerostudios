@@ -1,0 +1,14 @@
+AEROENHANCE STUDIO v0.3 - GPU QUICK START
+
+1. Extract the ZIP to its own folder.
+2. Run download-scunet-model.bat.
+3. Run diagnose-gpu.bat to inspect your NVIDIA driver and CUDA DLLs.
+4. Use official NVIDIA instructions to install CUDA 13.2+ and cuDNN 9.23+
+   compatible with the ONNX Runtime binary downloaded by ort rc.15.
+5. Run build-ai-cuda.bat (NOT build-windows.bat).
+6. In the app, select models\\scunet_color_real_psnr.onnx, enable AI,
+   and select 'NVIDIA CUDA (strict)'.
+7. Test a small JPEG. Watch nvidia-smi / Task Manager Compute engine.
+
+For failures, copy the build console text or status bar error into ChatGPT.
+This archive contains SOURCE CODE ONLY; it was not compiled in this environment.

@@ -1,0 +1,49 @@
+name: AeroEnhance Windows PRIVATE beta (CPU + CUDA)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: aeroenhance-beta-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [CPU, CUDA]
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      AERO_UPDATE_PUBLIC_KEY_HEX: ${{ vars.AERO_UPDATE_PUBLIC_KEY_HEX }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - name: Verify committed lockfile
+        run: |
+          if (-not (Test-Path 'apps/aeroenhance/Cargo.lock')) {
+            throw 'Commit apps/aeroenhance/Cargo.lock; run prepare-github.ps1 on your PC first.'
+          }
+          if ($env:AERO_UPDATE_PUBLIC_KEY_HEX -and $env:AERO_UPDATE_PUBLIC_KEY_HEX -notmatch '^[0-9a-fA-F]{64}$') {
+            throw 'AERO_UPDATE_PUBLIC_KEY_HEX must be a valid 64-character hex public key, or empty while model updates are disabled.'
+          }
+          if (-not $env:AERO_UPDATE_PUBLIC_KEY_HEX) {
+            Write-Warning 'No model update public key set; signed model updates will be disabled in this beta build.'
+          }
+      - name: Run core tests, build AI release, package runtime DLLs
+        run: |
+          ./tools/release/build-and-package.ps1 -Variant '${{ matrix.variant }}'
+      - name: Upload PRIVATE test ZIP (not a public GitHub Release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: AeroEnhance-${{ matrix.variant }}-private
+          path: |
+            dist/*.zip
+            dist/*.sha256
+          if-no-files-found: error
+          retention-days: 14

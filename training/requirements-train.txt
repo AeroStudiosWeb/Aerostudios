@@ -1,0 +1,10 @@
+# Install NVIDIA CUDA PyTorch separately using the official selector at
+# https://pytorch.org/get-started/locally/
+# Nothing from this file is shipped with AeroEnhance's Rust desktop app.
+numpy>=1.26,<3
+Pillow>=10,<13
+onnx>=1.16,<2
+onnxruntime>=1.18,<2
+
+# Preserve RGB16 TIFF clean references end-to-end (training only).
+tifffile>=2024.2,<2028

@@ -1,0 +1,27 @@
+# Rust build output
+.aero-target/
+**/target/
+
+# Compiled release packages
+dist/
+release-out/
+
+# AI models
+**/models/
+*.onnx
+*.onnx.data
+*.pt
+*.pth
+*.ckpt
+
+# Private configuration
+.env
+.env.*
+*.key
+
+# Python training files
+**/__pycache__/
+**/.venv/
+training/data/
+training/output/
+training/checkpoints/
