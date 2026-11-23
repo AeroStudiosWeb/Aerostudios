@@ -89,6 +89,15 @@
   // GitHub release metadata is optional, never required for the static website.
   const normalLinks = $$('a[data-asset]');
   const enhanceLinks = $$('a[data-aeroenhance-variant]');
+  // MAINTENANCE FLAG (23 November 2026): keep direct AeroEnhance downloads paused
+  // until a corrected Windows build has been verified. Do not enable based on GitHub assets alone.
+  const aeroEnhancePaused = true;
+  const pauseEnhanceLinks = () => enhanceLinks.forEach(link => {
+    link.href = 'aeroenhance.html#availability';
+    link.textContent = 'View repair status ↗';
+    link.title = 'AeroEnhance is temporarily unavailable';
+    link.hidden = String(link.dataset.aeroenhanceVariant || '').toUpperCase() === 'CPU';
+  });
   const status = $('#release-status');
   const version = $('#release-version');
   if (version && configured) version.textContent = tag;
@@ -100,8 +109,9 @@
   const enhanceRegex = /^AeroEnhance-v[\w.+-]+-Windows-x64-(CUDA|CPU)\.zip$/i;
   const matchesVariant = (asset, variant) => typeof asset.name === 'string' && enhanceRegex.test(asset.name) && asset.name.toUpperCase().endsWith(`-${variant}.ZIP`);
   const matching = (assets, variant) => assets.filter(a => matchesVariant(a, variant)).sort((a,b) => Date.parse(b.created_at || 0) - Date.parse(a.created_at || 0) || b.name.localeCompare(a.name))[0];
-  enhanceLinks.forEach(link => { link.href = release; });
-  if (!configured) { setStatus('Use the official GitHub Release for downloads.'); setEnhanceStatus('Release configuration missing — browse the GitHub Release for files.'); return; }
+  if (aeroEnhancePaused) pauseEnhanceLinks();
+  else enhanceLinks.forEach(link => { link.href = release; });
+  if (!configured) { setStatus('Use the official GitHub Release for downloads.'); if (!aeroEnhancePaused) setEnhanceStatus('Release configuration missing — browse the GitHub Release for files.'); return; }
   normalLinks.forEach(link => {
     const filename = link.dataset.asset || '';
     if (!/^[A-Za-z0-9_.-]+\.zip$/i.test(filename)) return;
@@ -130,6 +140,7 @@
       });
       const foundVariants = new Set();
       enhanceLinks.forEach(link => {
+        if (aeroEnhancePaused) return;
         const variant = String(link.dataset.aeroenhanceVariant || '').toUpperCase();
         if (variant !== 'CUDA' && variant !== 'CPU') return;
         const item = matching(assets, variant);
@@ -145,14 +156,14 @@
           link.textContent = 'Browse GitHub release ↗';
         }
       });
-      setEnhanceStatus(foundVariants.size ? `${foundVariants.size} AeroEnhance Windows variant${foundVariants.size===1?'':'s'} available · GitHub Releases` : 'No AeroEnhance ZIP was found in this release. Browse GitHub Releases.');
+      if (!aeroEnhancePaused) setEnhanceStatus(foundVariants.size ? `${foundVariants.size} AeroEnhance Windows variant${foundVariants.size===1?'':'s'} available · GitHub Releases` : 'No AeroEnhance ZIP was found in this release. Browse GitHub Releases.');
       setStatus(`${tag} · ${count.size} fixed-name ZIP${count.size===1?'':'s'} listed`);
     })
     .catch(() => {
       setStatus(`${tag} · Direct links available · GitHub metadata unavailable`);
-      setEnhanceStatus('Live release lookup unavailable. Browse the official GitHub Release to download AeroEnhance.');
+      if (!aeroEnhancePaused) setEnhanceStatus('Live release lookup unavailable. Browse the official GitHub Release to download AeroEnhance.');
       // The original three fixed-name app ZIPs keep their direct links.
-      enhanceLinks.forEach(link => { link.href = release; link.textContent = 'Browse GitHub release ↗'; });
+      if (!aeroEnhancePaused) enhanceLinks.forEach(link => { link.href = release; link.textContent = 'Browse GitHub release ↗'; });
     })
     .finally(() => window.clearTimeout(timeout));
 })();
